@@ -13,9 +13,7 @@ def generate_password(length, strength):
 
     password = ''.join(random.choice(characters) for _ in range(length))
     return password
-@app.route('/')
-def home():
-    return render_template('index.html')
+ 
 
 @app.route('/')
 def index():
