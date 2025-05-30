@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    @apply bg-gray-100 flex items-center justify-center min-h-screen;
+}
+
+.container {
+    @apply bg-white rounded-lg shadow-lg p-6 w-full max-w-md;
+}
+
+h1 {
+    @apply text-2xl font-bold text-center mb-4;
+}
+
+.label {
+    @apply block text-sm font-medium text-gray-700 mb-2;
+}
+
+.input {
+    @apply border border-gray-300 rounded-md p-2 mb-4 w-full;
+}
+
+.button {
+    @apply bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200;
+}
+
+.result-box {
+    @apply border border-gray-300 rounded-md p-4 mt-4 bg-gray-50 text-center;
+}
+
+.spinner {
+    @apply animate-spin h-5 w-5 text-blue-500 mx-auto;
+}
+
+.icon {
+    @apply inline-block mr-2;
+}

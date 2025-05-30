@@ -1,0 +1,106 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+ <body class="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md transition-colors duration-300">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-center text-gray-900 dark:text-gray-100 w-full">Password Generator</h1>
+            <button id="toggle-dark" class="ml-4 text-gray-500 dark:text-yellow-400 focus:outline-none" title="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+        <!-- ...existing code... -->
+        <div class="mb-4">
+            <label for="length" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                <i class="fas fa-arrows-alt-h mr-1"></i>Password Length
+            </label>
+            <div class="flex items-center space-x-2 mt-2">
+                <input type="range" id="length" min="4" max="20" value="12" class="w-full accent-blue-500">
+                <input type="number" id="length-number" min="4" max="20" value="12" class="w-16 text-center rounded border-gray-300 dark:bg-gray-700 dark:text-gray-100">
+            </div>
+        </div>
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                <i class="fas fa-shield-alt mr-1"></i>Password Strength
+            </label>
+            <select id="strength" class="mt-2 w-full border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-100">
+                <option value="1">Only Letters (a-z, A-Z)</option>
+                <option value="2">Letters and Numbers (a-z, A-Z, 0-9)</option>
+                <option value="3">Letters, Numbers, and Symbols (a-z, A-Z, 0-9, !@#$...)</option>
+            </select>
+        </div>
+        <button id="generate" class="w-full bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white py-2 rounded-md flex items-center justify-center transition-colors duration-300">
+            <i class="fas fa-magic mr-2"></i> Generate Password
+        </button>
+        <div id="result" class="mt-4 p-4 border rounded-md bg-gray-50 dark:bg-gray-700 text-center text-lg font-semibold text-gray-900 dark:text-gray-100 transition-colors duration-300"></div>
+        <button id="copy" class="mt-2 w-full bg-green-500 dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700 text-white py-2 rounded-md flex items-center justify-center hidden transition-colors duration-300">
+            <i class="fas fa-copy mr-2"></i> Copy to Clipboard
+        </button>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const lengthInput = document.getElementById('length');
+        const lengthNumber = document.getElementById('length-number');
+        const strengthSelect = document.getElementById('strength');
+        const generateButton = document.getElementById('generate');
+        const resultBox = document.getElementById('result');
+        const copyButton = document.getElementById('copy');
+        const toggleDark = document.getElementById('toggle-dark');
+
+        lengthInput.addEventListener('input', () => {
+            lengthNumber.value = lengthInput.value;
+        });
+
+        lengthNumber.addEventListener('input', () => {
+            lengthInput.value = lengthNumber.value;
+        });
+
+        generateButton.addEventListener('click', async () => {
+            const length = lengthInput.value;
+            const strength = strengthSelect.value;
+            resultBox.innerHTML = '<i class="fas fa-spinner fa-spin text-blue-500"></i> Generating...';
+            copyButton.classList.add('hidden');
+
+            const response = await fetch('/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ length, strength }),
+            });
+
+            const data = await response.json();
+            resultBox.textContent = data.password;
+            copyButton.classList.remove('hidden');
+        });
+
+        copyButton.addEventListener('click', () => {
+            navigator.clipboard.writeText(resultBox.textContent);
+            copyButton.innerHTML = '<i class="fas fa-check mr-2"></i> Copied!';
+            setTimeout(() => {
+                copyButton.innerHTML = '<i class="fas fa-copy mr-2"></i> Copy to Clipboard';
+            }, 1500);
+        });
+
+        // Dark mode toggle
+        toggleDark.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            if (document.documentElement.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    });
+</script>
+</body>
+</html>
